@@ -64,6 +64,12 @@ export default function Navbar() {
 
                     <div className="flex items-center gap-4">
                         <button
+                            onClick={() => setIsOpen(true)}
+                            className="md:hidden p-2 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-all"
+                        >
+                            <Search className="h-5 w-5" />
+                        </button>
+                        <button
                             onClick={() => setIsCartOpen(true)}
                             className="p-2 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-all relative"
                         >
