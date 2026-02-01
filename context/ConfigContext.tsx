@@ -7,6 +7,7 @@ interface SiteConfig {
     secondaryColor: string;
     carouselImages: any[];
     isStoreEnabled: boolean;
+    theme: string;
 }
 
 interface ConfigContextType {
@@ -23,7 +24,8 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
         primaryColor: "#E11D48", // Default
         secondaryColor: "#000000",
         carouselImages: [],
-        isStoreEnabled: true
+        isStoreEnabled: true,
+        theme: "Dark"
     });
     const [loading, setLoading] = useState(true);
 
@@ -33,11 +35,19 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
                 const res = await fetch(`${API_URL}/site-config`, { cache: 'no-store' });
                 if (res.ok) {
                     const data = await res.json();
+
+                    // Apply Theme
+                    const theme = data.theme || "Dark";
+                    const themeClass = `theme-${theme.toLowerCase()}`;
+                    document.body.classList.remove('theme-dark', 'theme-light', 'theme-christmas', 'theme-anniversary');
+                    document.body.classList.add(themeClass);
+
                     setConfig({
                         primaryColor: data.primaryColor || "#E11D48",
                         secondaryColor: data.secondaryColor || "#000000",
                         carouselImages: data.carouselImages || [],
-                        isStoreEnabled: data.isStoreEnabled !== undefined ? data.isStoreEnabled : true
+                        isStoreEnabled: data.isStoreEnabled !== undefined ? data.isStoreEnabled : true,
+                        theme: theme
                     });
                 }
             } catch (error) {

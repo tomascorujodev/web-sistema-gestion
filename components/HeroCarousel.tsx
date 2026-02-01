@@ -33,7 +33,7 @@ export default function HeroCarousel() {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/site-config/images`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/site-config`);
                 if (res.ok) {
                     const data = await res.json()
                     setConfig(data)

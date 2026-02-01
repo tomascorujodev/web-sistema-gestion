@@ -7,6 +7,7 @@ export interface Product {
     name: string;
     price: number;
     imageUrl?: string;
+    category?: string;
 }
 
 export interface CartItem extends Product {
@@ -23,6 +24,11 @@ interface CartContextType {
     cartCount: number;
     isCartOpen: boolean;
     setIsCartOpen: (open: boolean) => void;
+    appliedCoupon: any;
+    applyCoupon: (coupon: any) => boolean;
+    removeCoupon: () => void;
+    discountAmount: number;
+    finalTotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,6 +37,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState<any>(null); // Store full coupon object
 
     // Load from local storage
     useEffect(() => {
@@ -78,13 +85,61 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const clearCart = () => {
         setItems([]);
+        setAppliedCoupon(null);
+    };
+
+    const applyCoupon = (coupon: any): boolean => {
+        if (coupon.category) {
+            const hasEligibleItems = items.some(item => item.category === coupon.category);
+            if (!hasEligibleItems) {
+                return false;
+            }
+        }
+        setAppliedCoupon(coupon);
+        return true;
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
     };
 
     const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
     const cartCount = items.reduce((count, item) => count + item.quantity, 0);
 
+    // Calculate discount
+    let discountAmount = 0;
+    if (appliedCoupon) {
+        if (!appliedCoupon.category) {
+            // Apply to all
+            discountAmount = cartTotal * (appliedCoupon.discountPercentage / 100);
+        } else {
+            // Apply only to category
+            const eligibleTotal = items
+                .filter(item => item.category === appliedCoupon.category)
+                .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            discountAmount = eligibleTotal * (appliedCoupon.discountPercentage / 100);
+        }
+    }
+
+    const finalTotal = Math.max(0, cartTotal - discountAmount);
+
     return (
-        <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount, isCartOpen, setIsCartOpen }}>
+        <CartContext.Provider value={{
+            items,
+            addToCart,
+            removeFromCart,
+            updateQuantity,
+            clearCart,
+            cartTotal,
+            cartCount,
+            isCartOpen,
+            setIsCartOpen,
+            appliedCoupon,
+            applyCoupon,
+            removeCoupon,
+            discountAmount,
+            finalTotal
+        }}>
             {children}
         </CartContext.Provider>
     );

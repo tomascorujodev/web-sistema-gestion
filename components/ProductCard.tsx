@@ -31,13 +31,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             id: product.id,
             name: product.name,
             price: displayPrice, // Use the actual price (offer or regular)
-            imageUrl: product.imageUrl
+            imageUrl: product.imageUrl,
+            category: product.category || 'General'
         });
     };
 
     return (
-        <div className="group relative bg-neutral-900 border border-white/5 overflow-hidden hover:border-brand/50 transition-all duration-300 h-full flex flex-col">
-            <Link href={`/products/${product.id}`} className="block relative bg-white/5 overflow-hidden" style={{ aspectRatio: "1/1" }}>
+        <div className="group relative bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 overflow-hidden hover:border-brand/50 transition-all duration-300 h-full flex flex-col">
+            <Link href={`/products/${product.id}`} className="block relative bg-[var(--background)]/5 overflow-hidden" style={{ aspectRatio: "1/1" }}>
                 {product.imageUrl ? (
                     <img
                         src={product.imageUrl}
@@ -45,7 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-700 text-4xl font-bold bg-neutral-800">
+                    <div className="w-full h-full flex items-center justify-center text-[var(--foreground)]/50 text-4xl font-bold bg-[var(--foreground)]/10">
                         ?
                     </div>
                 )}
@@ -58,7 +59,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </span>
                     )}
                     {product.inStock && (
-                        <span className="bg-white text-black text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
+                        <span className="bg-[var(--background)] text-[var(--foreground)] text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
                             Stock
                         </span>
                     )}
@@ -66,18 +67,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             </Link>
 
             <div className="p-5 flex-1 flex flex-col">
-                <p className="text-gray-500 text-xs font-bold uppercase mb-1 tracking-wider">{product.category || 'General'}</p>
-                <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors">{product.name}</h3>
+                <p className="text-[var(--foreground)]/60 text-xs font-bold uppercase mb-1 tracking-wider">{product.category || 'General'}</p>
+                <h3 className="text-lg font-bold text-[var(--foreground)] mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors">{product.name}</h3>
                 <div className="flex items-center justify-between mt-auto pt-4">
                     <div className="flex flex-col">
                         {product.isOffer && product.originalPrice && (
-                            <span className="text-gray-500 text-xs line-through block mb-0.5">${product.originalPrice.toFixed(2)}</span>
+                            <span className="text-[var(--foreground)]/60 text-xs line-through block mb-0.5">${product.originalPrice.toFixed(2)}</span>
                         )}
-                        <span className="text-xl font-bold text-white">${displayPrice.toFixed(2)}</span>
+                        <span className="text-xl font-bold text-[var(--foreground)]">${displayPrice.toFixed(2)}</span>
                     </div>
                     <button
                         onClick={handleAddToCart}
-                        className="bg-white text-black p-3 hover:bg-brand hover:text-white transition-colors active:scale-95 border border-transparent hover:border-white/20"
+                        className="bg-[var(--foreground)] text-[var(--background)] p-3 hover:bg-brand hover:text-white transition-colors active:scale-95 border border-transparent hover:border-[var(--background)]/20"
                         aria-label="Add to cart"
                     >
                         <ShoppingCart className="h-4 w-4" />

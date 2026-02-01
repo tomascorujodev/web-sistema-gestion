@@ -20,7 +20,7 @@ export default async function ProductsPage() {
     const { products, categories } = await getData();
 
     return (
-        <div className="min-h-screen bg-black">
+        <div className="min-h-screen bg-[var(--background)]">
             {/* Header */}
             <div className="bg-neutral-900 border-b border-white/10 py-12 px-4">
                 <div className="max-w-7xl mx-auto">

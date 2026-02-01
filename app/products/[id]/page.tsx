@@ -86,11 +86,11 @@ export default function ProductDetailPage() {
     };
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-white pt-24 pb-12 px-4 md:px-8">
+        <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-24 pb-12 px-4 md:px-8">
             <div className="max-w-6xl mx-auto">
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
+                    className="flex items-center text-[var(--foreground)]/60 hover:text-[var(--foreground)] mb-8 transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Volver
@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {/* Image Section */}
-                    <div className="relative bg-neutral-900 rounded-2xl overflow-hidden border border-white/5" style={{ aspectRatio: "1/1" }}>
+                    <div className="relative bg-[var(--foreground)]/5 rounded-2xl overflow-hidden border border-[var(--foreground)]/10" style={{ aspectRatio: "1/1" }}>
                         {product.imageUrl ? (
                             <img
                                 src={product.imageUrl}
@@ -106,7 +106,7 @@ export default function ProductDetailPage() {
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center text-neutral-800">
+                            <div className="w-full h-full flex items-center justify-center text-[var(--foreground)]/5">
                                 <span className="text-6xl font-bold">?</span>
                             </div>
                         )}
@@ -122,7 +122,7 @@ export default function ProductDetailPage() {
                                 </span>
                             )}
                             {product.inStock && (
-                                <span className="bg-white text-black text-xs font-bold px-3 py-1.5 uppercase tracking-wider w-fit">
+                                <span className="bg-[var(--background)] text-[var(--foreground)] text-xs font-bold px-3 py-1.5 uppercase tracking-wider w-fit">
                                     Stock
                                 </span>
                             )}
@@ -134,39 +134,39 @@ export default function ProductDetailPage() {
                         <span className="text-brand font-bold uppercase tracking-widest mb-2" style={{ color: primaryColor }}>
                             {product.category || 'General'}
                         </span>
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-[var(--foreground)]">
                             {product.name}
                         </h1>
 
-                        <div className="mb-8 p-6 bg-neutral-900/50 rounded-xl border border-white/5 backdrop-blur-sm">
+                        <div className="mb-8 p-6 bg-[var(--foreground)]/5 rounded-xl border border-[var(--foreground)]/10 backdrop-blur-sm">
                             <div className="flex items-baseline gap-4 mb-2">
-                                <span className="text-4xl font-black text-white">
+                                <span className="text-4xl font-black text-[var(--foreground)]">
                                     ${displayPrice.toFixed(2)}
                                 </span>
                                 {product.isOnOffer && (
-                                    <span className="text-xl text-gray-500 line-through decoration-2 decoration-brand/50">
+                                    <span className="text-xl text-[var(--foreground)]/40 line-through decoration-2 decoration-brand/50">
                                         ${product.price.toFixed(2)}
                                     </span>
                                 )}
                             </div>
-                            <p className="text-gray-400 text-sm">
+                            <p className="text-[var(--foreground)]/60 text-sm">
                                 {product.inStock ? "Disponible para entrega inmediata" : "Consultar disponibilidad"}
                             </p>
                         </div>
 
                         {/* Description */}
                         <div className="mb-10">
-                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-[var(--foreground)]">
                                 <div className="w-1 h-6 bg-brand rounded-full" style={{ backgroundColor: primaryColor }} />
                                 Descripción
                             </h3>
-                            <div className="text-gray-300 leading-relaxed space-y-4 text-lg">
+                            <div className="text-[var(--foreground)]/80 leading-relaxed space-y-4 text-lg">
                                 {product.description ? (
                                     product.description.split('\n').map((line, i) => (
                                         <p key={i}>{line}</p>
                                     ))
                                 ) : (
-                                    <p className="italic text-gray-500">Sin descripción disponible.</p>
+                                    <p className="italic text-[var(--foreground)]/40">Sin descripción disponible.</p>
                                 )}
                             </div>
                         </div>
@@ -176,7 +176,7 @@ export default function ProductDetailPage() {
                             <button
                                 onClick={handleAddToCart}
                                 disabled={!product.inStock}
-                                className="flex-1 bg-white text-black py-4 px-8 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+                                className="flex-1 bg-[var(--foreground)] text-[var(--background)] py-4 px-8 rounded-xl font-bold text-lg hover:bg-brand hover:text-white transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
                             >
                                 <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
                                 Agregar al Carrito

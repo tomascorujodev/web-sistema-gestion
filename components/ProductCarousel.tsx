@@ -28,22 +28,22 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
     if (products.length === 0) return null;
 
     return (
-        <section className="py-12 border-b border-white/10">
+        <section className="py-12 border-b border-[var(--foreground)]/10">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-bold text-white uppercase tracking-widest border-l-4 border-brand pl-4">
+                    <h2 className="text-2xl font-bold text-[var(--foreground)] uppercase tracking-widest border-l-4 border-brand pl-4">
                         {title}
                     </h2>
                     <div className="flex gap-2">
                         <button
                             onClick={() => scroll("left")}
-                            className="p-2 border border-white/10 rounded-full hover:bg-brand hover:text-white hover:border-brand transition-colors text-gray-400"
+                            className="p-2 border border-[var(--foreground)]/10 rounded-full hover:bg-brand hover:text-white hover:border-brand transition-colors text-[var(--foreground)]/50"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
                             onClick={() => scroll("right")}
-                            className="p-2 border border-white/10 rounded-full hover:bg-brand hover:text-white hover:border-brand transition-colors text-gray-400"
+                            className="p-2 border border-[var(--foreground)]/10 rounded-full hover:bg-brand hover:text-white hover:border-brand transition-colors text-[var(--foreground)]/50"
                         >
                             <ChevronRight className="h-5 w-5" />
                         </button>

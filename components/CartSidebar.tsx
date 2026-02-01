@@ -1,70 +1,68 @@
 "use client";
 
-import { useCart } from "@/context/CartContext";
-import { X, Trash2, ShoppingBag, Minus, Plus, Truck, Store } from "lucide-react";
-import { useState } from "react";
+import { useCart, CartItem } from "@/context/CartContext";
+import { X, Trash2, ShoppingBag, Minus, Plus, Truck, Store, Tag, ArrowRight } from "lucide-react";
+import { useState, useMemo } from "react";
+import Link from "next/link";
 
 export default function CartSidebar() {
-    const { isCartOpen, setIsCartOpen, items, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
-    const [isCheckingOut, setIsCheckingOut] = useState(false);
-    const [formData, setFormData] = useState({
-        name: "",
-        phone: "",
-        address: "",
-        deliveryMethod: "envio", // "envio" or "retiro"
-        branch: "Sucursal Tucumán",
-        notes: ""
-    });
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const {
+        items,
+        removeFromCart,
+        updateQuantity,
+        cartTotal,
+        isCartOpen,
+        setIsCartOpen,
+        appliedCoupon,
+        applyCoupon,
+        removeCoupon,
+        discountAmount,
+        finalTotal
+    } = useCart();
+
+
+
+    // Coupon State (local UI state)
+    const [couponCode, setCouponCode] = useState("");
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [couponMessage, setCouponMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     if (!isCartOpen) return null;
 
-    const handleCheckout = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Validation
-        if (formData.deliveryMethod === 'envio' && !formData.address) {
-            alert("Por favor, ingresá una dirección de envío.");
-            return;
-        }
-
-        setLoading(true);
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) return;
+        setCouponLoading(true);
+        setCouponMessage(null);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/orders`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    customerName: formData.name,
-                    customerPhone: formData.phone,
-                    customerAddress: formData.deliveryMethod === 'envio' ? formData.address : `RETIRO EN: ${formData.branch}`,
-                    customerEmail: "web@order.com",
-                    deliveryMethod: formData.deliveryMethod,
-                    branch: formData.deliveryMethod === 'retiro' ? formData.branch : null,
-                    notes: formData.notes,
-                    items: items.map(item => ({ productId: item.id, quantity: item.quantity }))
-                })
-            });
-
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/coupons/validate/${couponCode}`);
             if (response.ok) {
-                setSuccess(true);
-                clearCart();
-                setTimeout(() => {
-                    setSuccess(false);
-                    setIsCheckingOut(false);
-                    setIsCartOpen(false);
-                    setFormData({ name: "", phone: "", address: "", deliveryMethod: "envio", branch: "Sucursal Tucumán", notes: "" });
-                }, 3000);
+                const data = await response.json();
+                const success = applyCoupon({
+                    code: data.code,
+                    discountPercentage: data.discountPercentage,
+                    category: data.category
+                });
+                if (success) {
+                    setCouponMessage({ type: 'success', text: `¡Cupón ${data.code} aplicado!` });
+                } else {
+                    setCouponMessage({ type: 'error', text: `Este cupón solo es válido para productos de la categoría: ${data.category}` });
+                }
             } else {
-                alert("Hubo un error al procesar el pedido.");
+                setCouponMessage({ type: 'error', text: 'Cupón inválido o expirado.' });
             }
         } catch (error) {
-            console.error("Checkout error:", error);
-            alert("Error de conexión con el servidor.");
+            console.error("Coupon validation error", error);
+            setCouponMessage({ type: 'error', text: 'Error al validar cupón.' });
         } finally {
-            setLoading(false);
+            setCouponLoading(false);
         }
+    };
+
+    const handleRemoveCoupon = () => {
+        removeCoupon();
+        setCouponCode("");
+        setCouponMessage(null);
     };
 
     return (
@@ -76,182 +74,130 @@ export default function CartSidebar() {
             />
 
             {/* Drawer */}
-            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-neutral-900 border-l border-white/10 shadow-2xl flex flex-col">
-                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-black">
-                    <h2 className="text-xl font-bold flex items-center gap-3 text-white tracking-wide uppercase">
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-[var(--background)] border-l border-[var(--foreground)]/10 shadow-2xl flex flex-col">
+                <div className="flex items-center justify-between p-6 border-b border-[var(--foreground)]/10 bg-[var(--foreground)]/5">
+                    <h2 className="text-xl font-bold flex items-center gap-3 text-[var(--foreground)] tracking-wide uppercase">
                         <ShoppingBag className="h-5 w-5 text-brand" />
                         Tu Carrito
                     </h2>
                     <button
                         onClick={() => setIsCartOpen(false)}
-                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+                        className="p-2 hover:bg-[var(--foreground)]/10 rounded-full transition-colors text-[var(--foreground)]/50 hover:text-[var(--foreground)]"
                     >
                         <X className="h-6 w-6" />
                     </button>
                 </div>
 
-                {success ? (
-                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in">
-                        <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(157,62,60,0.5)]">
-                            <span className="text-4xl text-white">✓</span>
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    {items.length === 0 ? (
+                        <div className="text-center text-gray-500 py-20 flex flex-col items-center gap-4">
+                            <ShoppingBag className="h-12 w-12 opacity-20" />
+                            <p>Tu carrito está vacío.</p>
                         </div>
-                        <h3 className="text-2xl font-bold mb-2 text-white">¡Pedido Registrado!</h3>
-                        <p className="text-gray-400">Tu pedido ha sido enviado al sistema correctamente.</p>
-                    </div>
-                ) : (
-                    <>
-                        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                            {items.length === 0 ? (
-                                <div className="text-center text-gray-500 py-20 flex flex-col items-center gap-4">
-                                    <ShoppingBag className="h-12 w-12 opacity-20" />
-                                    <p>Tu carrito está vacío.</p>
+                    ) : (
+                        items.map(item => (
+                            <div key={item.id} className="flex gap-4 bg-[var(--foreground)]/5 p-4 border border-[var(--foreground)]/5">
+                                {item.imageUrl && (
+                                    <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover bg-[var(--foreground)]/5" />
+                                )}
+                                <div className="flex-1">
+                                    <h4 className="font-medium line-clamp-2 text-[var(--foreground)] text-sm mb-1">{item.name}</h4>
+                                    <p className="text-brand font-bold">${item.price}</p>
                                 </div>
-                            ) : (
-                                items.map(item => (
-                                    <div key={item.id} className="flex gap-4 bg-black p-4 border border-white/5">
-                                        {item.imageUrl && (
-                                            <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover bg-neutral-800" />
-                                        )}
-                                        <div className="flex-1">
-                                            <h4 className="font-medium line-clamp-2 text-white text-sm mb-1">{item.name}</h4>
-                                            <p className="text-brand font-bold">${item.price}</p>
-                                        </div>
-                                        <div className="flex flex-col items-end gap-3">
-                                            <button
-                                                onClick={() => removeFromCart(item.id)}
-                                                className="text-gray-500 hover:text-red-500 transition-colors"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </button>
-                                            <div className="flex items-center border border-white/10">
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    className="p-1 px-2 hover:bg-white/10 text-gray-400 hover:text-white transition-colors border-r border-white/10"
-                                                >
-                                                    <Minus className="h-3 w-3" />
-                                                </button>
-                                                <span className="text-sm font-medium w-8 text-center text-white">{item.quantity}</span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    className="p-1 px-2 hover:bg-white/10 text-gray-400 hover:text-white transition-colors border-l border-white/10"
-                                                >
-                                                    <Plus className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
+                                <div className="flex flex-col items-end gap-3">
+                                    <button
+                                        onClick={() => removeFromCart(item.id)}
+                                        className="text-[var(--foreground)]/40 hover:text-red-500 transition-colors"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                    <div className="flex items-center border border-[var(--foreground)]/10">
+                                        <button
+                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                            className="p-1 px-2 hover:bg-[var(--foreground)]/10 text-[var(--foreground)]/40 hover:text-[var(--foreground)] transition-colors border-r border-[var(--foreground)]/10"
+                                        >
+                                            <Minus className="h-3 w-3" />
+                                        </button>
+                                        <span className="text-sm font-medium w-8 text-center text-[var(--foreground)]">{item.quantity}</span>
+                                        <button
+                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                            className="p-1 px-2 hover:bg-[var(--foreground)]/10 text-[var(--foreground)]/40 hover:text-[var(--foreground)] transition-colors border-l border-[var(--foreground)]/10"
+                                        >
+                                            <Plus className="h-3 w-3" />
+                                        </button>
                                     </div>
-                                ))
-                            )}
-                        </div>
-
-                        {items.length > 0 && (
-                            <div className="p-6 border-t border-white/10 bg-black">
-                                <div className="flex justify-between items-center mb-6">
-                                    <span className="text-gray-400 uppercase text-sm tracking-wider">Total Estimado</span>
-                                    <span className="text-3xl font-bold text-white">${cartTotal}</span>
                                 </div>
+                            </div>
+                        ))
+                    )}
+                </div>
 
-                                {isCheckingOut ? (
-                                    <form onSubmit={handleCheckout} className="space-y-4 animate-in slide-in-from-bottom-5">
-                                        <div className="space-y-4">
-                                            <input
-                                                required
-                                                placeholder="Nombre Completo"
-                                                className="w-full bg-neutral-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-brand transition-colors placeholder:text-gray-600"
-                                                value={formData.name}
-                                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                            />
-                                            <input
-                                                required
-                                                placeholder="Teléfono (WhatsApp)"
-                                                className="w-full bg-neutral-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-brand transition-colors placeholder:text-gray-600"
-                                                value={formData.phone}
-                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                            />
-
-                                            <div className="grid grid-cols-2 gap-2 mt-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, deliveryMethod: 'envio' })}
-                                                    className={`flex flex-col items-center gap-2 p-3 border transition-all ${formData.deliveryMethod === 'envio'
-                                                        ? 'border-brand bg-brand/10 text-brand'
-                                                        : 'border-white/10 text-gray-500 hover:bg-white/5'
-                                                        }`}
-                                                >
-                                                    <Truck className="h-5 w-5" />
-                                                    <span className="text-[10px] font-bold uppercase">Para Envío</span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, deliveryMethod: 'retiro' })}
-                                                    className={`flex flex-col items-center gap-2 p-3 border transition-all ${formData.deliveryMethod === 'retiro'
-                                                        ? 'border-brand bg-brand/10 text-brand'
-                                                        : 'border-white/10 text-gray-500 hover:bg-white/5'
-                                                        }`}
-                                                >
-                                                    <Store className="h-5 w-5" />
-                                                    <span className="text-[10px] font-bold uppercase">Para Retiro</span>
-                                                </button>
-                                            </div>
-
-                                            {formData.deliveryMethod === 'envio' ? (
-                                                <input
-                                                    required
-                                                    placeholder="Dirección de Entrega"
-                                                    className="w-full bg-neutral-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-brand transition-colors placeholder:text-gray-600 animate-in fade-in slide-in-from-top-2"
-                                                    value={formData.address}
-                                                    onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                                />
-                                            ) : (
-                                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                                    <label className="text-gray-500 text-[10px] font-bold uppercase block px-1">Elegir Sucursal</label>
-                                                    <select
-                                                        required
-                                                        className="w-full bg-neutral-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-brand transition-colors appearance-none cursor-pointer"
-                                                        value={formData.branch}
-                                                        onChange={e => setFormData({ ...formData, branch: e.target.value })}
-                                                    >
-                                                        <option value="Sucursal Tucumán">Sucursal Tucumán</option>
-                                                        <option value="Sucursal Independencia">Sucursal Independencia</option>
-                                                    </select>
-                                                </div>
-                                            )}
-
-                                            <textarea
-                                                placeholder="Notas adicionales..."
-                                                className="w-full bg-neutral-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-brand transition-colors placeholder:text-gray-600 h-20 resize-none"
-                                                value={formData.notes}
-                                                onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                                            />
-                                        </div>
-                                        <div className="flex gap-3 pt-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsCheckingOut(false)}
-                                                className="flex-1 px-4 py-3 border border-white/20 text-white hover:bg-white/5 transition-colors font-medium uppercase text-sm tracking-wider"
-                                            >
-                                                Volver
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={loading}
-                                                className="flex-1 bg-brand text-white font-bold py-3 hover:bg-red-700 transition-colors disabled:opacity-50 uppercase text-sm tracking-widest shadow-lg"
-                                            >
-                                                {loading ? "Enviando..." : "Confirmar"}
-                                            </button>
-                                        </div>
-                                    </form>
+                {items.length > 0 && (
+                    <div className="p-6 border-t border-[var(--foreground)]/10 bg-[var(--foreground)]/5">
+                        {/* Coupon Section */}
+                        <div className="mb-6">
+                            <div className="flex gap-2">
+                                <div className="relative flex-1">
+                                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--foreground)]/50" />
+                                    <input
+                                        type="text"
+                                        placeholder="Código de cupón"
+                                        className="w-full bg-[var(--background)] border border-[var(--foreground)]/10 pl-10 pr-4 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:border-brand placeholder:text-[var(--foreground)]/40"
+                                        value={couponCode}
+                                        onChange={(e) => setCouponCode(e.target.value)}
+                                        disabled={!!appliedCoupon}
+                                    />
+                                </div>
+                                {!appliedCoupon ? (
+                                    <button
+                                        onClick={handleApplyCoupon}
+                                        disabled={!couponCode || couponLoading}
+                                        className="bg-[var(--foreground)] text-[var(--background)] px-4 py-2 text-sm font-bold hover:bg-brand hover:text-white transition-colors disabled:opacity-50"
+                                    >
+                                        {couponLoading ? "..." : "APLICAR"}
+                                    </button>
                                 ) : (
                                     <button
-                                        onClick={() => setIsCheckingOut(true)}
-                                        className="w-full bg-white text-black font-bold py-4 hover:bg-gray-200 transition-colors uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#9D3E3C] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                                        onClick={handleRemoveCoupon}
+                                        className="bg-red-500/10 text-red-500 p-2 hover:bg-red-500/20 transition-colors rounded-r border-t border-r border-b border-red-500/20"
+                                        title="Eliminar cupón"
                                     >
-                                        Iniciar Pedido
+                                        <X className="h-4 w-4" />
                                     </button>
                                 )}
                             </div>
-                        )}
-                    </>
+                            {couponMessage && (
+                                <p className={`text-xs mt-2 ${couponMessage.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                                    {couponMessage.text}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="space-y-2 mb-6 text-sm">
+                            <div className="flex justify-between items-center text-[var(--foreground)]/60">
+                                <span>Subtotal</span>
+                                <span>${cartTotal.toFixed(2)}</span>
+                            </div>
+                            {discountAmount > 0 && (
+                                <div className="flex justify-between items-center text-green-500">
+                                    <span>Descuento ({appliedCoupon?.code})</span>
+                                    <span>-${discountAmount.toFixed(2)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between items-center pt-2 border-t border-[var(--foreground)]/10">
+                                <span className="text-[var(--foreground)] font-bold uppercase tracking-wider">Total</span>
+                                <span className="text-2xl font-bold text-[var(--foreground)]">${finalTotal.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <Link
+                            href="/checkout"
+                            className="w-full bg-brand text-white font-bold py-4 hover:bg-red-700 transition-colors uppercase tracking-widest text-sm shadow-lg text-center flex items-center justify-center gap-2"
+                            onClick={() => setIsCartOpen(false)}
+                        >
+                            Iniciar Compra <ArrowRight className="w-4 h-4" />
+                        </Link>
+                    </div>
                 )}
             </div>
         </div>
