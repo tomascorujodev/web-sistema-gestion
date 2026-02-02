@@ -1,4 +1,4 @@
-import { Truck, CreditCard, ShieldCheck, Gift } from "lucide-react";
+import { Truck, CreditCard, ShieldCheck, Store } from "lucide-react";
 
 export default function PromoSection() {
     return (
@@ -10,14 +10,14 @@ export default function PromoSection() {
                             <Truck className="h-8 w-8" />
                         </div>
                         <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">Envíos Gratis</h3>
-                        <p className="text-sm text-gray-500">En compras superiores a $50.000</p>
+                        <p className="text-sm text-gray-500">En compras superiores a $90.000</p>
                     </div>
 
                     <div className="flex flex-col items-center text-center p-6 bg-black border border-white/5 hover:border-brand/30 transition-colors group">
                         <div className="p-4 bg-white/5 rounded-full mb-4 group-hover:bg-brand group-hover:text-white transition-colors text-gray-300">
                             <CreditCard className="h-8 w-8" />
                         </div>
-                        <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">Hasta 3 Cuotas</h3>
+                        <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">3 y 6 Cuotas</h3>
                         <p className="text-sm text-gray-500">Sin interés con tarjetas bancarias</p>
                     </div>
 
@@ -31,10 +31,10 @@ export default function PromoSection() {
 
                     <div className="flex flex-col items-center text-center p-6 bg-black border border-white/5 hover:border-brand/30 transition-colors group">
                         <div className="p-4 bg-white/5 rounded-full mb-4 group-hover:bg-brand group-hover:text-white transition-colors text-gray-300">
-                            <Gift className="h-8 w-8" />
+                            <Store className="h-8 w-8" />
                         </div>
-                        <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">Regalos Sorpresa</h3>
-                        <p className="text-sm text-gray-500">En pedidos seleccionados</p>
+                        <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">Retiro en tienda</h3>
+                        <p className="text-sm text-gray-500">Gratis en sucursal</p>
                     </div>
                 </div>
             </div>
