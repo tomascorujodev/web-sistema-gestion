@@ -8,8 +8,7 @@ import { ArrowRight } from 'lucide-react'
 async function getProducts() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/products`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      next: { revalidate: 60 }
     });
 
     if (!res.ok) {

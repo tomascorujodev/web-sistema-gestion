@@ -6,19 +6,28 @@ import Autoplay from 'embla-carousel-autoplay'
 import Link from 'next/link'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
+interface CarouselImage {
+    id: number;
+    imageUrl: string;
+    title: string;
+    link: string;
+    mobileImageUrl?: string | null;
+}
+
 // Fallback images if no carousel images are configured
-const DEFAULT_IMAGES = [
+const DEFAULT_IMAGES: CarouselImage[] = [
     {
         id: 999,
         imageUrl: "https://images.unsplash.com/photo-1551730459-92db2a308d6b?q=80&w=2574&auto=format&fit=crop",
         title: "Nueva Colección 2025",
-        link: "/products"
+        link: "/products",
+        mobileImageUrl: null
     }
 ];
 
 export default function HeroCarousel() {
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 5000 })])
-    const [images, setImages] = useState(DEFAULT_IMAGES)
+    const [images, setImages] = useState<CarouselImage[]>(DEFAULT_IMAGES)
     const [config, setConfig] = useState<any>(null)
     const [loading, setLoading] = useState(true)
 
@@ -59,8 +68,22 @@ export default function HeroCarousel() {
             <div className="overflow-hidden" ref={emblaRef}>
                 <div className="flex">
                     {images.map((img) => (
-                        <div className="flex-[0_0_100%] min-w-0 relative h-[250px] md:h-[500px] lg:h-[70vh]" key={img.id}>
-                            <img src={img.imageUrl} alt={img.title || 'Slide'} className="w-full h-full object-cover" />
+                        <div className="flex-[0_0_100%] min-w-0 relative h-[500px] md:h-[500px] lg:h-[70vh]" key={img.id}>
+                            <picture>
+                                {/* Mobile Image */}
+                                {img.mobileImageUrl && (
+                                    <source
+                                        media="(max-width: 768px)"
+                                        srcSet={img.mobileImageUrl}
+                                    />
+                                )}
+                                {/* Desktop/Default Image */}
+                                <img
+                                    src={img.imageUrl}
+                                    alt={img.title || 'Slide'}
+                                    className="w-full h-full object-cover"
+                                />
+                            </picture>
                         </div>
                     ))}
                 </div>
