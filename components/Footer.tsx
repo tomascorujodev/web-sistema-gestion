@@ -8,13 +8,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                     {/* Brand */}
                     <div className="space-y-6">
-                        <Link href="/" className="block w-48">
-                            <img
-                                src="/streetdog-logo-blanco.png"
-                                alt="Street Dog Pet Shop"
-                                className="w-full h-auto object-contain"
-                            />
-                        </Link>
+
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                             Dedicados a ofrecer los mejores productos para el cuidado y felicidad de tus mascotas. Calidad premium y atención personalizada.
                         </p>

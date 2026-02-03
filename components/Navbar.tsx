@@ -56,6 +56,9 @@ export default function Navbar() {
                             <Link href="/products" className="text-gray-300 hover:text-brand px-3 py-2 text-sm font-medium transition-colors uppercase tracking-wide">
                                 Productos
                             </Link>
+                            <a href="https://fidebillapp.com.ar/streetdog" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-brand px-3 py-2 text-sm font-medium transition-colors uppercase tracking-wide">
+                                Socios
+                            </a>
 
                         </div>
                     </div>
@@ -112,6 +115,9 @@ export default function Navbar() {
                         <Link href="/products" className="text-gray-300 hover:text-brand block px-3 py-2 rounded-md text-base font-medium">
                             PRODUCTOS
                         </Link>
+                        <a href="https://fidebillapp.com.ar/streetdog" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-brand block px-3 py-2 rounded-md text-base font-medium">
+                            SOCIOS
+                        </a>
                     </div>
                 </div>
             )}

@@ -68,22 +68,12 @@ export default function HeroCarousel() {
             <div className="overflow-hidden" ref={emblaRef}>
                 <div className="flex">
                     {images.map((img) => (
-                        <div className="flex-[0_0_100%] min-w-0 relative h-[500px] md:h-[500px] lg:h-[70vh]" key={img.id}>
-                            <picture>
-                                {/* Mobile Image */}
-                                {img.mobileImageUrl && (
-                                    <source
-                                        media="(max-width: 768px)"
-                                        srcSet={img.mobileImageUrl}
-                                    />
-                                )}
-                                {/* Desktop/Default Image */}
-                                <img
-                                    src={img.imageUrl}
-                                    alt={img.title || 'Slide'}
-                                    className="w-full h-full object-cover"
-                                />
-                            </picture>
+                        <div className="flex-[0_0_100%] min-w-0 relative" key={img.id}>
+                            <img
+                                src={img.imageUrl}
+                                alt={img.title || 'Slide'}
+                                className="w-full h-auto block"
+                            />
                         </div>
                     ))}
                 </div>
