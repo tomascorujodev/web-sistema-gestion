@@ -1,73 +1,56 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
-import { useCart, Product } from "@/context/CartContext";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useConfig } from "@/context/ConfigContext";
+import ProductActions from "@/components/product/ProductActions";
 
-const API_URL = "http://localhost:5027/api";
+// Fetch product data on the server
+async function getProduct(id: string) {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/products/${id}`, {
+            cache: 'no-store' // Keep no-store for individual products to ensure stock accuracy? Or maybe minimal cache like 10s
+        });
 
-export default function ProductDetailPage() {
-    const params = useParams();
-    const router = useRouter();
-    const { addToCart } = useCart();
-    const { config } = useConfig();
-    const [product, setProduct] = useState<Product & { description?: string; category?: string; stock?: number; inStock?: boolean; isOnOffer?: boolean; offerPrice?: number } | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+        if (!res.ok) return null;
 
-    useEffect(() => {
-        if (!params.id) return;
-
-        const fetchProduct = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/products/${params.id}`);
-                if (!res.ok) {
-                    if (res.status === 404) throw new Error("Producto no encontrado");
-                    throw new Error("Error al cargar el producto");
-                }
-                const data = await res.json();
-
-                // Calculate derived fields similarly to backend or store logic if needed
-                // But data should be complete from API
-                setProduct({
-                    ...data,
-                    inStock: data.stock > 0
-                });
-            } catch (err) {
-                console.error(err);
-                setError(err instanceof Error ? err.message : "Error desconocido");
-            } finally {
-                setLoading(false);
-            }
+        const data = await res.json();
+        return {
+            ...data,
+            inStock: data.stock > 0
         };
-
-        fetchProduct();
-    }, [params.id]);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand"></div>
-            </div>
-        );
+    } catch (error) {
+        console.error(error);
+        return null;
     }
+}
 
-    if (error || !product) {
+// Fetch site config (colors)
+async function getConfig() {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/site-config`, { next: { revalidate: 60 } });
+        if (res.ok) return await res.json();
+    } catch (error) {
+        console.error(error);
+    }
+    return {};
+}
+
+
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const product = await getProduct(id);
+    const config = await getConfig();
+
+    if (!product) {
         return (
             <div className="min-h-screen bg-neutral-950 text-white flex flex-col items-center justify-center p-4">
-                <h1 className="text-2xl font-bold mb-4">Error</h1>
-                <p className="text-gray-400 mb-6">{error || "Producto no encontrado"}</p>
-                <Link href="/" className="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-brand hover:text-white transition">
-                    Volver al inicio
+                <h1 className="text-2xl font-bold mb-4">Producto no encontrado</h1>
+                <Link href="/products" className="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-brand hover:text-white transition">
+                    Volver al catálogo
                 </Link>
             </div>
         );
     }
 
-    const primaryColor = config.primaryColor || '#E11D48'; // Default rose-600
+    const primaryColor = config.primaryColor || '#E11D48';
 
     // Logic for price display
     const discountPercentage = product.isOnOffer && product.offerPrice
@@ -76,25 +59,16 @@ export default function ProductDetailPage() {
 
     const displayPrice = product.isOnOffer && product.offerPrice ? product.offerPrice : product.price;
 
-    const handleAddToCart = () => {
-        addToCart({
-            id: product.id,
-            name: product.name,
-            price: displayPrice,
-            imageUrl: product.imageUrl
-        });
-    };
-
     return (
         <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-24 pb-12 px-4 md:px-8">
             <div className="max-w-6xl mx-auto">
-                <button
-                    onClick={() => router.back()}
-                    className="flex items-center text-[var(--foreground)]/60 hover:text-[var(--foreground)] mb-8 transition-colors"
+                <Link
+                    href="/products"
+                    className="inline-flex items-center text-[var(--foreground)]/60 hover:text-[var(--foreground)] mb-8 transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Volver
-                </button>
+                </Link>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {/* Image Section */}
@@ -162,7 +136,7 @@ export default function ProductDetailPage() {
                             </h3>
                             <div className="text-[var(--foreground)]/80 leading-relaxed space-y-4 text-lg">
                                 {product.description ? (
-                                    product.description.split('\n').map((line, i) => (
+                                    product.description.split('\n').map((line: string, i: number) => (
                                         <p key={i}>{line}</p>
                                     ))
                                 ) : (
@@ -171,16 +145,9 @@ export default function ProductDetailPage() {
                             </div>
                         </div>
 
-                        {/* Actions */}
+                        {/* Actions Component (Client Side) */}
                         <div className="flex gap-4">
-                            <button
-                                onClick={handleAddToCart}
-                                disabled={!product.inStock}
-                                className="flex-1 bg-[var(--foreground)] text-[var(--background)] py-4 px-8 rounded-xl font-bold text-lg hover:bg-brand hover:text-white transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
-                            >
-                                <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                                Agregar al Carrito
-                            </button>
+                            <ProductActions product={product} primaryColor={primaryColor} />
                         </div>
                     </div>
                 </div>

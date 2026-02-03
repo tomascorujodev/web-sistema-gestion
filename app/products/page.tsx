@@ -3,8 +3,8 @@ import ProductCatalog from "@/components/ProductCatalog";
 // Fetch data from the Backend API
 async function getData() {
     try {
-        const productsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/products`, { cache: 'no-store' });
-        const categoriesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/categories`, { cache: 'no-store' });
+        const productsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/products`, { next: { revalidate: 60 } });
+        const categoriesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/store/categories`, { next: { revalidate: 60 } });
 
         const products = productsRes.ok ? await productsRes.json() : [];
         const categories = categoriesRes.ok ? await categoriesRes.json() : [];

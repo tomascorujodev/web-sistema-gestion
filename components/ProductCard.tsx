@@ -58,9 +58,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                             -{discountPercentage}% OFF
                         </span>
                     )}
-                    {product.inStock && (
+                    {product.inStock ? (
                         <span className="bg-[var(--background)] text-[var(--foreground)] text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
                             Stock
+                        </span>
+                    ) : (
+                        <span className="bg-neutral-600 text-white text-[10px] font-black px-2 py-1 uppercase tracking-wider w-fit shadow-md">
+                            SIN STOCK
                         </span>
                     )}
                 </div>
@@ -78,7 +82,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </div>
                     <button
                         onClick={handleAddToCart}
-                        className="bg-[var(--foreground)] text-[var(--background)] p-3 hover:bg-brand hover:text-white transition-colors active:scale-95 border border-transparent hover:border-[var(--background)]/20"
+                        disabled={!product.inStock}
+                        className="bg-[var(--foreground)] text-[var(--background)] p-3 hover:bg-brand hover:text-white transition-colors active:scale-95 border border-transparent hover:border-[var(--background)]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--foreground)] disabled:hover:text-[var(--background)]"
                         aria-label="Add to cart"
                     >
                         <ShoppingCart className="h-4 w-4" />
