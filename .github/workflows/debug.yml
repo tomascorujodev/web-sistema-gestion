@@ -1,0 +1,8 @@
+name: Debug Action
+on: push
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "GitHub Actions are working!"
