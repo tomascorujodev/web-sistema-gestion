@@ -58,12 +58,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                             -{discountPercentage}% OFF
                         </span>
                     )}
-                    {product.inStock ? (
-                        <span className="bg-[var(--background)] text-[var(--foreground)] text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
-                            Stock
-                        </span>
-                    ) : (
-                        <span className="bg-neutral-600 text-white text-[10px] font-black px-2 py-1 uppercase tracking-wider w-fit shadow-md">
+                    {!product.inStock && (
+                        <span className="bg-black text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
                             SIN STOCK
                         </span>
                     )}
