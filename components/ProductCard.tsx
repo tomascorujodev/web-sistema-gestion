@@ -58,9 +58,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                             -{discountPercentage}% OFF
                         </span>
                     )}
-                    {product.inStock && (
-                        <span className="bg-[var(--background)] text-[var(--foreground)] text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
-                            Stock
+                    {!product.inStock && (
+                        <span className="bg-black text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
+                            SIN STOCK
                         </span>
                     )}
                 </div>
