@@ -90,7 +90,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const applyCoupon = (coupon: any): boolean => {
         if (coupon.category) {
-            const hasEligibleItems = items.some(item => item.category === coupon.category);
+            const hasEligibleItems = items.some(item =>
+                item.category && item.category.toLowerCase() === coupon.category.toLowerCase()
+            );
             if (!hasEligibleItems) {
                 return false;
             }
@@ -115,7 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         } else {
             // Apply only to category
             const eligibleTotal = items
-                .filter(item => item.category === appliedCoupon.category)
+                .filter(item => item.category && item.category.toLowerCase() === appliedCoupon.category.toLowerCase())
                 .reduce((sum, item) => sum + (item.price * item.quantity), 0);
             discountAmount = eligibleTotal * (appliedCoupon.discountPercentage / 100);
         }

@@ -42,7 +42,8 @@ export default function HeroCarousel() {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/site-config`);
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5027";
+                const res = await fetch(`${apiUrl}/api/site-config`);
                 if (res.ok) {
                     const data = await res.json()
                     setConfig(data)
