@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${inter.className} bg-black text-white min-h-screen selection:bg-brand selection:text-white`}>
+      <body className={`${inter.className} min-h-screen selection:bg-brand selection:text-white`}>
         <Providers>
           <Navbar />
           <main className="pt-16 min-h-[calc(100vh-theme(spacing.16))]">
