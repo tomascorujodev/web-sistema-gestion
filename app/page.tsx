@@ -42,7 +42,7 @@ export default async function Home() {
   const accessoriesTitle = accessoriesProducts.length > 0 ? "Accesorios" : "Más Vendidos";
 
   return (
-    <div className="min-h-screen bg-[var(--background)] pb-20">
+    <div className="min-h-screen bg-black pb-20">
       {/* Hero Section */}
       <HeroCarousel />
 
@@ -62,11 +62,11 @@ export default async function Home() {
 
       {/* Call to Action - View All */}
       <section className="py-20 px-4 text-center">
-        <div className="max-w-3xl mx-auto bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 p-12 relative overflow-hidden group">
+        <div className="max-w-3xl mx-auto bg-white/5 border border-white/10 p-12 relative overflow-hidden group">
           <div className="absolute inset-0 bg-brand/5 group-hover:bg-brand/10 transition-colors"></div>
-          <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 relative z-10">¿No encontraste lo que buscabas?</h2>
-          <p className="text-[var(--foreground)]/60 mb-8 relative z-10">Tenemos miles de productos más en nuestro catálogo completo.</p>
-          <Link href="/products" className="inline-flex items-center gap-2 bg-[var(--foreground)] text-[var(--background)] px-8 py-3 font-bold hover:opacity-90 transition-opacity uppercase tracking-wider relative z-10">
+          <h2 className="text-3xl font-bold text-neutral-100 mb-6 relative z-10">¿No encontraste lo que buscabas?</h2>
+          <p className="text-neutral-400 mb-8 relative z-10">Tenemos miles de productos más en nuestro catálogo completo.</p>
+          <Link href="/products" className="inline-flex items-center gap-2 bg-neutral-100 text-black px-8 py-3 font-bold hover:opacity-90 transition-opacity uppercase tracking-wider relative z-10">
             Ver Catálogo Completo <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

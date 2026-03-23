@@ -67,14 +67,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             </Link>
 
             <div className="p-5 flex-1 flex flex-col">
-                <p className="text-[var(--foreground)]/60 text-xs font-bold uppercase mb-1 tracking-wider">{product.category || 'General'}</p>
-                <h3 className="text-lg font-bold text-[var(--foreground)] mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors">{product.name}</h3>
+                <p className="text-neutral-400 text-xs font-bold uppercase mb-1 tracking-wider">{product.category || 'General'}</p>
+                <h3 className="text-lg font-bold text-neutral-100 mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors">{product.name}</h3>
                 <div className="flex items-center justify-between mt-auto pt-4">
                     <div className="flex flex-col">
                         {product.isOffer && product.originalPrice && (
-                            <span className="text-[var(--foreground)]/60 text-xs line-through block mb-0.5">${product.originalPrice.toFixed(2)}</span>
+                            <span className="text-neutral-400 text-xs line-through block mb-0.5">${product.originalPrice.toFixed(2)}</span>
                         )}
-                        <span className="text-xl font-bold text-[var(--foreground)]">${displayPrice.toFixed(2)}</span>
+                        <span className="text-xl font-bold text-neutral-100">${displayPrice.toFixed(2)}</span>
                     </div>
                     <button
                         onClick={handleAddToCart}
