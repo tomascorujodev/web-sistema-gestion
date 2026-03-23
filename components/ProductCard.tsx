@@ -37,8 +37,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     return (
-        <div className="group relative bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 overflow-hidden hover:border-brand/50 transition-all duration-300 h-full flex flex-col">
-            <Link href={`/products/${product.id}`} className="block relative bg-[var(--background)]/5 overflow-hidden" style={{ aspectRatio: "1/1" }}>
+        <div className="group relative bg-neutral-900 border border-white/5 overflow-hidden hover:border-brand/50 transition-all duration-300 h-full flex flex-col">
+            <Link href={`/products/${product.id}`} className="block relative bg-white/5 overflow-hidden" style={{ aspectRatio: "1/1" }}>
                 {product.imageUrl ? (
                     <img
                         src={product.imageUrl}
