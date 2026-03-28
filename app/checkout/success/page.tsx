@@ -12,27 +12,27 @@ export default function CheckoutSuccessPage() {
     const status = searchParams.get('status') // For MP callbacks
 
     return (
-        <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center p-4">
-            <div className="max-w-md w-full bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 p-8 rounded-2xl text-center animate-in fade-in zoom-in duration-500">
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+            <div className="max-w-md w-full bg-neutral-900 border border-white/10 p-8 rounded-2xl text-center animate-in fade-in zoom-in duration-500">
                 <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle className="w-10 h-10" />
                 </div>
 
-                <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+                <h1 className="text-3xl font-bold text-white mb-2">
                     ¡Pedido Confirmado!
                 </h1>
 
                 {orderId && (
-                    <p className="text-[var(--foreground)]/60 text-sm mb-6 uppercase tracking-wider">
+                    <p className="text-gray-500 text-sm mb-6 uppercase tracking-wider">
                         Pedido #{orderId}
                     </p>
                 )}
 
                 <div className="space-y-4 mb-8">
-                    <p className="text-[var(--foreground)]/80">
+                    <p className="text-gray-300">
                         Hemos recibido tu pedido correctamente.
                     </p>
-                    <div className="bg-[var(--foreground)]/5 p-4 rounded-xl text-sm text-[var(--foreground)]/70">
+                    <div className="bg-white/5 p-4 rounded-xl text-sm text-gray-400">
                         <p>
                             En breve nos pondremos en contacto contigo por <strong>WhatsApp</strong> o <strong>Teléfono</strong> para confirmar los detalles y la entrega.
                         </p>

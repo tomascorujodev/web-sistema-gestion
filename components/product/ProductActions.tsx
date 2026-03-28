@@ -35,7 +35,7 @@ export default function ProductActions({ product, primaryColor }: ProductActions
         <button
             onClick={handleAddToCart}
             disabled={!product.inStock}
-            className="flex-1 bg-[var(--foreground)] text-[var(--background)] py-4 px-8 rounded-xl font-bold text-lg hover:bg-brand hover:text-white transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="flex-1 bg-neutral-100 text-black py-4 px-8 rounded-xl font-bold text-lg hover:bg-brand hover:text-white transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
         >
             <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
             {product.inStock ? "Agregar al Carrito" : "Sin Stock"}

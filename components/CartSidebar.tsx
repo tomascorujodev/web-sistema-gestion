@@ -74,15 +74,15 @@ export default function CartSidebar() {
             />
 
             {/* Drawer */}
-            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-[var(--background)] border-l border-[var(--foreground)]/10 shadow-2xl flex flex-col">
-                <div className="flex items-center justify-between p-6 border-b border-[var(--foreground)]/10 bg-[var(--foreground)]/5">
-                    <h2 className="text-xl font-bold flex items-center gap-3 text-[var(--foreground)] tracking-wide uppercase">
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-black border-l border-white/10 shadow-2xl flex flex-col">
+                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-neutral-900">
+                    <h2 className="text-xl font-bold flex items-center gap-3 text-white tracking-wide uppercase">
                         <ShoppingBag className="h-5 w-5 text-brand" />
                         Tu Carrito
                     </h2>
                     <button
                         onClick={() => setIsCartOpen(false)}
-                        className="p-2 hover:bg-[var(--foreground)]/10 rounded-full transition-colors text-[var(--foreground)]/50 hover:text-[var(--foreground)]"
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-500 hover:text-white"
                     >
                         <X className="h-6 w-6" />
                     </button>
@@ -96,32 +96,32 @@ export default function CartSidebar() {
                         </div>
                     ) : (
                         items.map(item => (
-                            <div key={item.id} className="flex gap-4 bg-[var(--foreground)]/5 p-4 border border-[var(--foreground)]/5">
+                            <div key={item.id} className="flex gap-4 bg-neutral-900/50 p-4 border border-white/5">
                                 {item.imageUrl && (
-                                    <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover bg-[var(--foreground)]/5" />
+                                    <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover bg-white/5" />
                                 )}
                                 <div className="flex-1">
-                                    <h4 className="font-medium line-clamp-2 text-[var(--foreground)] text-sm mb-1">{item.name}</h4>
+                                    <h4 className="font-medium line-clamp-2 text-white text-sm mb-1">{item.name}</h4>
                                     <p className="text-brand font-bold">${item.price}</p>
                                 </div>
                                 <div className="flex flex-col items-end gap-3">
                                     <button
                                         onClick={() => removeFromCart(item.id)}
-                                        className="text-[var(--foreground)]/40 hover:text-red-500 transition-colors"
+                                        className="text-gray-500 hover:text-red-500 transition-colors"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </button>
-                                    <div className="flex items-center border border-[var(--foreground)]/10">
+                                    <div className="flex items-center border border-white/10">
                                         <button
                                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                            className="p-1 px-2 hover:bg-[var(--foreground)]/10 text-[var(--foreground)]/40 hover:text-[var(--foreground)] transition-colors border-r border-[var(--foreground)]/10"
+                                            className="p-1 px-2 hover:bg-white/10 text-gray-500 hover:text-white transition-colors border-r border-white/10"
                                         >
                                             <Minus className="h-3 w-3" />
                                         </button>
-                                        <span className="text-sm font-medium w-8 text-center text-[var(--foreground)]">{item.quantity}</span>
+                                        <span className="text-sm font-medium w-8 text-center text-white">{item.quantity}</span>
                                         <button
                                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                            className="p-1 px-2 hover:bg-[var(--foreground)]/10 text-[var(--foreground)]/40 hover:text-[var(--foreground)] transition-colors border-l border-[var(--foreground)]/10"
+                                            className="p-1 px-2 hover:bg-white/10 text-gray-500 hover:text-white transition-colors border-l border-white/10"
                                         >
                                             <Plus className="h-3 w-3" />
                                         </button>
@@ -138,11 +138,11 @@ export default function CartSidebar() {
                         <div className="mb-6">
                             <div className="flex gap-2">
                                 <div className="relative flex-1">
-                                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--foreground)]/50" />
+                                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                     <input
                                         type="text"
                                         placeholder="Código de cupón"
-                                        className="w-full bg-[var(--background)] border border-[var(--foreground)]/10 pl-10 pr-4 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:border-brand placeholder:text-[var(--foreground)]/40"
+                                        className="w-full bg-black border border-white/10 pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-brand placeholder:text-gray-500"
                                         value={couponCode}
                                         onChange={(e) => setCouponCode(e.target.value)}
                                         disabled={!!appliedCoupon}
@@ -152,7 +152,7 @@ export default function CartSidebar() {
                                     <button
                                         onClick={handleApplyCoupon}
                                         disabled={!couponCode || couponLoading}
-                                        className="bg-[var(--foreground)] text-[var(--background)] px-4 py-2 text-sm font-bold hover:bg-brand hover:text-white transition-colors disabled:opacity-50"
+                                        className="bg-neutral-100 text-black px-4 py-2 text-sm font-bold hover:bg-brand hover:text-white transition-colors disabled:opacity-50"
                                     >
                                         {couponLoading ? "..." : "APLICAR"}
                                     </button>
@@ -174,7 +174,7 @@ export default function CartSidebar() {
                         </div>
 
                         <div className="space-y-2 mb-6 text-sm">
-                            <div className="flex justify-between items-center text-[var(--foreground)]/60">
+                            <div className="flex justify-between items-center text-gray-400">
                                 <span>Subtotal</span>
                                 <span>${cartTotal.toFixed(2)}</span>
                             </div>
@@ -184,9 +184,9 @@ export default function CartSidebar() {
                                     <span>-${discountAmount.toFixed(2)}</span>
                                 </div>
                             )}
-                            <div className="flex justify-between items-center pt-2 border-t border-[var(--foreground)]/10">
-                                <span className="text-[var(--foreground)] font-bold uppercase tracking-wider">Total</span>
-                                <span className="text-2xl font-bold text-[var(--foreground)]">${finalTotal.toFixed(2)}</span>
+                            <div className="flex justify-between items-center pt-2 border-t border-white/10">
+                                <span className="text-white font-bold uppercase tracking-wider">Total</span>
+                                <span className="text-2xl font-bold text-white">${finalTotal.toFixed(2)}</span>
                             </div>
                         </div>
 

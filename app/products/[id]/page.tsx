@@ -60,11 +60,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     const displayPrice = product.isOnOffer && product.offerPrice ? product.offerPrice : product.price;
 
     return (
-        <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-24 pb-12 px-4 md:px-8">
+        <div className="min-h-screen bg-black text-white pt-24 pb-12 px-4 md:px-8">
             <div className="max-w-6xl mx-auto">
                 <Link
                     href="/products"
-                    className="inline-flex items-center text-[var(--foreground)]/60 hover:text-[var(--foreground)] mb-8 transition-colors"
+                    className="inline-flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Volver
@@ -72,7 +72,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {/* Image Section */}
-                    <div className="relative bg-[var(--foreground)]/5 rounded-2xl overflow-hidden border border-[var(--foreground)]/10" style={{ aspectRatio: "1/1" }}>
+                    <div className="relative bg-neutral-900 rounded-2xl overflow-hidden border border-white/5" style={{ aspectRatio: "1/1" }}>
                         {product.imageUrl ? (
                             <img
                                 src={product.imageUrl}
@@ -112,35 +112,35 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                             {product.name}
                         </h1>
 
-                        <div className="mb-8 p-6 bg-[var(--foreground)]/5 rounded-xl border border-[var(--foreground)]/10 backdrop-blur-sm">
+                        <div className="mb-8 p-6 bg-neutral-900 rounded-xl border border-white/5 backdrop-blur-sm">
                             <div className="flex items-baseline gap-4 mb-2">
                                 <span className="text-4xl font-black text-[var(--foreground)]">
                                     ${displayPrice.toFixed(2)}
                                 </span>
                                 {product.isOnOffer && (
-                                    <span className="text-xl text-[var(--foreground)]/40 line-through decoration-2 decoration-brand/50">
+                                    <span className="text-xl text-gray-500 line-through decoration-2 decoration-brand/50">
                                         ${product.price.toFixed(2)}
                                     </span>
                                 )}
                             </div>
-                            <p className="text-[var(--foreground)]/60 text-sm">
+                            <p className="text-gray-400 text-sm">
                                 {product.inStock ? "Disponible para entrega inmediata" : "Consultar disponibilidad"}
                             </p>
                         </div>
 
                         {/* Description */}
                         <div className="mb-10">
-                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-[var(--foreground)]">
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-white">
                                 <div className="w-1 h-6 bg-brand rounded-full" style={{ backgroundColor: primaryColor }} />
                                 Descripción
                             </h3>
-                            <div className="text-[var(--foreground)]/80 leading-relaxed space-y-4 text-lg">
+                            <div className="text-gray-300 leading-relaxed space-y-4 text-lg">
                                 {product.description ? (
                                     product.description.split('\n').map((line: string, i: number) => (
                                         <p key={i}>{line}</p>
                                     ))
                                 ) : (
-                                    <p className="italic text-[var(--foreground)]/40">Sin descripción disponible.</p>
+                                    <p className="italic text-gray-500">Sin descripción disponible.</p>
                                 )}
                             </div>
                         </div>
