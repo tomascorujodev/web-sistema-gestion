@@ -32,6 +32,7 @@ function CatalogContent({ products, categories }: ProductCatalogProps) {
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [currentPage, setCurrentPage] = useState(1);
     const [showOffersOnly, setShowOffersOnly] = useState(false);
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
     // Sync state with URL if it changes externally
     useEffect(() => {
@@ -79,46 +80,86 @@ function CatalogContent({ products, categories }: ProductCatalogProps) {
         }
     };
 
+    const handleCategoryClick = (category: string) => {
+        setSelectedCategory(category);
+        if (window.innerWidth < 1024) {
+            setIsFiltersOpen(false);
+        }
+    };
+
     return (
         <div className="flex flex-col lg:flex-row gap-8">
+            {/* Mobile Filter Trigger */}
+            <div className="lg:hidden flex gap-2">
+                <button
+                    onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                    className="flex-1 flex items-center justify-between bg-neutral-900 border border-white/10 p-4 font-bold text-white uppercase tracking-wider transition-all duration-300 active:scale-[0.98]"
+                >
+                    <span className="flex items-center gap-2">
+                        <Filter className={`h-4 w-4 transition-colors ${isFiltersOpen ? 'text-brand' : 'text-gray-400'}`} />
+                        {isFiltersOpen ? 'Cerrar Filtros' : 'Filtrar por Categoría'}
+                    </span>
+                    <span className="text-[10px] bg-brand/20 text-brand px-2 py-0.5 rounded-full">
+                        {selectedCategory === "Todos" ? categories.length : 1}
+                    </span>
+                </button>
+                {selectedCategory !== "Todos" && (
+                    <button
+                        onClick={() => setSelectedCategory("Todos")}
+                        className="bg-neutral-900 border border-white/10 p-4 text-brand"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+                )}
+            </div>
+
             {/* Sidebar Filters */}
-            <aside className="lg:w-64 flex-shrink-0 space-y-6">
-                <div className="bg-neutral-900 border border-white/5 p-5">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-wider">
+            <aside className={`lg:w-64 flex-shrink-0 space-y-6 transition-all duration-500 overflow-hidden ${isFiltersOpen ? 'max-h-[1000px] opacity-100 mb-6' : 'max-h-0 lg:max-h-none opacity-0 lg:opacity-100 lg:mb-0 pointer-events-none lg:pointer-events-auto'}`}>
+                <div className="bg-neutral-900 border border-white/10 p-6 shadow-2xl">
+                    <h3 className="hidden lg:flex text-lg font-bold text-white mb-6 items-center gap-2 uppercase tracking-wider">
                         <Filter className="h-4 w-4 text-brand" />
                         Categorías
                     </h3>
-                    <div className="space-y-2 max-h-[65vh] overflow-y-auto custom-scrollbar pr-2">
+
+                    <div className="space-y-1.5 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
                         <button
-                            onClick={() => setShowOffersOnly(!showOffersOnly)}
-                            className={`w-full text-left px-3 py-2 text-sm uppercase tracking-wide transition-colors flex items-center justify-between ${showOffersOnly
-                                ? "bg-brand text-white font-bold"
-                                : "text-brand border border-brand/30 hover:bg-brand/10"
+                            onClick={() => {
+                                setShowOffersOnly(!showOffersOnly);
+                                if (window.innerWidth < 1024) setIsFiltersOpen(false);
+                            }}
+                            className={`w-full text-left px-4 py-3 text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-between group ${showOffersOnly
+                                ? "bg-brand text-white font-black"
+                                : "text-brand border border-brand/20 hover:bg-brand/5"
                                 }`}
                         >
-                            <span>Solo Ofertas %</span>
-                            {showOffersOnly && <X className="h-3 w-3" />}
+                            <span className="flex items-center gap-2">
+                                % Ofertas Especiales
+                            </span>
+                            {showOffersOnly && <X className="h-4 w-4" />}
                         </button>
-                        <div className="h-px bg-white/10 my-4" />
+
+                        <div className="h-px bg-white/5 my-6" />
+
                         <button
-                            onClick={() => setSelectedCategory("Todos")}
-                            className={`w-full text-left px-3 py-2 text-sm uppercase tracking-wide transition-colors ${selectedCategory === "Todos"
-                                ? "bg-brand text-white font-bold"
-                                : "text-gray-400 hover:text-white hover:bg-white/5"
+                            onClick={() => handleCategoryClick("Todos")}
+                            className={`w-full text-left px-4 py-3 text-sm uppercase tracking-widest transition-all duration-300 border-l-2 ${selectedCategory === "Todos"
+                                ? "border-brand bg-brand/10 text-white font-bold pl-5"
+                                : "border-transparent text-gray-500 hover:text-white hover:bg-white/5 hover:pl-5"
                                 }`}
                         >
-                            Todos
+                            Todas las categorías
                         </button>
+
                         {categories.map(category => (
                             <button
                                 key={category}
-                                onClick={() => setSelectedCategory(category)}
-                                className={`w-full text-left px-3 py-2 text-sm uppercase tracking-wide transition-colors ${selectedCategory === category
-                                    ? "bg-brand text-white font-bold"
-                                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                                onClick={() => handleCategoryClick(category)}
+                                className={`w-full text-left px-4 py-3 text-sm uppercase tracking-widest transition-all duration-300 border-l-2 ${selectedCategory === category
+                                    ? "border-brand bg-brand/10 text-white font-bold pl-5"
+                                    : "border-transparent text-gray-500 hover:text-white hover:bg-white/5 hover:pl-5"
                                     }`}
                             >
-                                {category || "Sin Categoría"}
+                                {category || "Otros"}
                             </button>
                         ))}
                     </div>
@@ -128,29 +169,38 @@ function CatalogContent({ products, categories }: ProductCatalogProps) {
             {/* Main Content */}
             <div className="flex-1">
                 {/* Search Bar (Local) */}
-                <div className="mb-6 bg-neutral-900 border border-white/5 p-4 flex items-center gap-3">
-                    <Search className="h-5 w-5 text-gray-400" />
+                <div className="mb-8 relative group">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                        <Search className="h-5 w-5 text-gray-500 group-focus-within:text-brand transition-colors" />
+                    </div>
                     <input
                         type="text"
-                        placeholder="Buscar productos..."
-                        className="bg-transparent border-none focus:outline-none text-white w-full placeholder:text-gray-500 uppercase text-sm tracking-wider"
+                        placeholder="Buscar en el catálogo..."
+                        className="w-full bg-neutral-900 border border-white/10 py-4 pl-12 pr-4 focus:outline-none focus:border-brand/50 text-white placeholder:text-gray-600 uppercase text-xs tracking-[0.2em] transition-all"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
 
                 {/* Results Info */}
-                <div className="mb-4 flex items-center justify-between text-gray-400 text-sm uppercase tracking-wider">
-                    <span>Mostrando {filteredProducts.length} productos</span>
+                <div className="mb-6 flex items-center justify-between text-gray-500 text-[10px] uppercase tracking-[0.2em]">
+                    <div className="flex items-center gap-4">
+                        <span>Total: <span className="text-white font-bold">{filteredProducts.length}</span></span>
+                        {selectedCategory !== "Todos" && (
+                            <span className="flex items-center gap-1 bg-white/5 px-2 py-0.5 text-brand rounded">
+                                {selectedCategory}
+                            </span>
+                        )}
+                    </div>
                     {totalPages > 1 && (
-                        <span>Página {currentPage} de {totalPages}</span>
+                        <span>Pág. {currentPage} de {totalPages}</span>
                     )}
                 </div>
 
                 {/* Grid */}
                 {paginatedProducts.length > 0 ? (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-12">
                             {paginatedProducts.map(product => (
                                 <ProductCard key={product.id} product={product} />
                             ))}
@@ -158,23 +208,23 @@ function CatalogContent({ products, categories }: ProductCatalogProps) {
 
                         {/* Pagination Controls */}
                         {totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-4 py-8 border-t border-white/10">
+                            <div className="flex justify-center items-center gap-4 py-12 border-t border-white/5">
                                 <button
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className="p-2 border border-[var(--foreground)]/10 text-[var(--foreground)] hover:bg-brand hover:border-brand hover:text-white disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:border-[var(--foreground)]/10 disabled:hover:text-[var(--foreground)] transition-colors"
+                                    className="p-3 bg-neutral-900 border border-white/10 text-white hover:bg-brand hover:border-brand disabled:opacity-30 disabled:hover:bg-neutral-900 disabled:hover:border-white/10 transition-all active:scale-95"
                                 >
                                     <ChevronLeft className="h-5 w-5" />
                                 </button>
 
-                                <span className="text-white font-bold bg-white/5 px-4 py-2 border border-white/10">
-                                    {currentPage} / {totalPages}
+                                <span className="text-white text-sm font-bold tracking-widest bg-neutral-900 px-6 py-3 border border-white/10 min-w-[100px] text-center">
+                                    {currentPage} <span className="text-gray-600 mx-1">/</span> {totalPages}
                                 </span>
 
                                 <button
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className="p-2 border border-[var(--foreground)]/10 text-[var(--foreground)] hover:bg-brand hover:border-brand hover:text-white disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:border-[var(--foreground)]/10 disabled:hover:text-[var(--foreground)] transition-colors"
+                                    className="p-3 bg-neutral-900 border border-white/10 text-white hover:bg-brand hover:border-brand disabled:opacity-30 disabled:hover:bg-neutral-900 disabled:hover:border-white/10 transition-all active:scale-95"
                                 >
                                     <ChevronRight className="h-5 w-5" />
                                 </button>
@@ -182,11 +232,19 @@ function CatalogContent({ products, categories }: ProductCatalogProps) {
                         )}
                     </>
                 ) : (
-                    <div className="py-20 text-center border border-dashed border-[var(--foreground)]/10 bg-[var(--foreground)]/5">
-                        <p className="text-[var(--foreground)]/60">No se encontraron productos para "{searchQuery}".</p>
+                    <div className="py-32 text-center border border-dashed border-white/10 bg-white/[0.02]">
+                        <Search className="h-12 w-12 text-gray-700 mx-auto mb-4" />
+                        <p className="text-gray-400 uppercase tracking-widest text-sm">No se encontraron productos</p>
+                        <button
+                            onClick={() => { setSearchQuery(""); setSelectedCategory("Todos"); }}
+                            className="mt-6 text-brand text-xs uppercase tracking-widest border-b border-brand pb-1 hover:text-white hover:border-white transition-all"
+                        >
+                            Limpiar filtros
+                        </button>
                     </div>
                 )}
             </div>
+
         </div>
     );
 }

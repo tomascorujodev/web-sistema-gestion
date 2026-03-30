@@ -66,20 +66,20 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
             </Link>
 
-            <div className="p-5 flex-1 flex flex-col">
-                <p className="text-neutral-400 text-xs font-bold uppercase mb-1 tracking-wider">{product.category || 'General'}</p>
-                <h3 className="text-lg font-bold text-neutral-100 mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors">{product.name}</h3>
-                <div className="flex items-center justify-between mt-auto pt-4">
+            <div className="p-3 sm:p-5 flex-1 flex flex-col">
+                <p className="text-neutral-500 text-[9px] sm:text-xs font-bold uppercase mb-1 tracking-widest">{product.category || 'General'}</p>
+                <h3 className="text-sm sm:text-lg font-bold text-neutral-100 mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors h-10 sm:h-auto">{product.name}</h3>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-auto pt-3 gap-2">
                     <div className="flex flex-col">
                         {product.isOffer && product.originalPrice && (
-                            <span className="text-neutral-400 text-xs line-through block mb-0.5">${product.originalPrice.toFixed(2)}</span>
+                            <span className="text-neutral-500 text-[10px] sm:text-xs line-through block mb-0.5 tracking-tighter">${product.originalPrice.toFixed(2)}</span>
                         )}
-                        <span className="text-xl font-bold text-neutral-100">${displayPrice.toFixed(2)}</span>
+                        <span className="text-base sm:text-xl font-black text-white tracking-tighter">${displayPrice.toFixed(2)}</span>
                     </div>
                     <button
                         onClick={handleAddToCart}
                         disabled={!product.inStock}
-                        className="bg-[var(--foreground)] text-[var(--background)] p-3 hover:bg-brand hover:text-white transition-colors active:scale-95 border border-transparent hover:border-[var(--background)]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--foreground)] disabled:hover:text-[var(--background)]"
+                        className="w-full sm:w-auto bg-white text-black p-2 sm:p-3 hover:bg-brand hover:text-white transition-all active:scale-95 border border-transparent disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                         aria-label="Add to cart"
                     >
                         <ShoppingCart className="h-4 w-4" />
