@@ -7,7 +7,7 @@ import { ArrowLeft, Check, ChevronRight, CreditCard, LayoutList, MapPin, Store, 
 
 export default function CheckoutPage() {
     const router = useRouter()
-    const { items, finalTotal, discountAmount, appliedCoupon, clearCart } = useCart()
+    const { items, finalTotal, discountAmount, appliedCoupon, clearCart, shippingCost, isShippingModuleEnabled } = useCart()
     const [loading, setLoading] = useState(false)
     const [step, setStep] = useState(1) // 1: Datos, 2: Pago
     const [errors, setErrors] = useState<Record<string, string>>({})
@@ -418,9 +418,17 @@ export default function CheckoutPage() {
                                     <span>-${discountAmount.toFixed(2)}</span>
                                 </div>
                             )}
+                            
+                            {isShippingModuleEnabled && formData.deliveryMethod === 'envio' && (
+                                <div className="flex justify-between text-white">
+                                    <span>Envío</span>
+                                    <span>{shippingCost > 0 ? `$${shippingCost.toFixed(2)}` : 'Gratis'}</span>
+                                </div>
+                            )}
+
                             <div className="flex justify-between text-xl font-bold text-white pt-2">
-                                <span>Total</span>
-                                <span>${finalTotal.toFixed(2)}</span>
+                                <span>Total a Pagar</span>
+                                <span>${(finalTotal + (formData.deliveryMethod === 'envio' ? shippingCost : 0)).toFixed(2)}</span>
                             </div>
                         </div>
                     </div>

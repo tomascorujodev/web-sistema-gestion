@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useConfig } from "./ConfigContext";
 
 export interface Product {
     id: number;
@@ -8,6 +9,7 @@ export interface Product {
     price: number;
     imageUrl?: string;
     category?: string;
+    excludeFromCoupons?: boolean;
 }
 
 export interface CartItem extends Product {
@@ -28,6 +30,9 @@ interface CartContextType {
     applyCoupon: (coupon: any) => boolean;
     removeCoupon: () => void;
     discountAmount: number;
+    shippingCost: number;
+    freeShippingThreshold: number;
+    isShippingModuleEnabled: boolean;
     finalTotal: number;
 }
 
@@ -38,6 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
     const [appliedCoupon, setAppliedCoupon] = useState<any>(null); // Store full coupon object
+    const { config } = useConfig();
 
     // Load from local storage
     useEffect(() => {
@@ -91,11 +97,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const applyCoupon = (coupon: any): boolean => {
         if (coupon.category) {
             const hasEligibleItems = items.some(item =>
-                item.category && item.category.toLowerCase() === coupon.category.toLowerCase()
+                !item.excludeFromCoupons && item.category && item.category.toLowerCase() === coupon.category.toLowerCase()
             );
             if (!hasEligibleItems) {
                 return false;
             }
+        } else {
+            const hasEligibleItems = items.some(item => !item.excludeFromCoupons);
+            if (!hasEligibleItems) return false;
         }
         setAppliedCoupon(coupon);
         return true;
@@ -111,15 +120,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // Calculate discount
     let discountAmount = 0;
     if (appliedCoupon) {
+        let eligibleTotal = 0;
         if (!appliedCoupon.category) {
-            // Apply to all
-            discountAmount = cartTotal * (appliedCoupon.discountPercentage / 100);
-        } else {
-            // Apply only to category
-            const eligibleTotal = items
-                .filter(item => item.category && item.category.toLowerCase() === appliedCoupon.category.toLowerCase())
+            // Apply to all non-excluded items
+            eligibleTotal = items
+                .filter(item => !item.excludeFromCoupons)
                 .reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            discountAmount = eligibleTotal * (appliedCoupon.discountPercentage / 100);
+        } else {
+            // Apply only to category and non-excluded items
+            eligibleTotal = items
+                .filter(item => !item.excludeFromCoupons && item.category && item.category.toLowerCase() === appliedCoupon.category.toLowerCase())
+                .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        }
+        discountAmount = eligibleTotal * (appliedCoupon.discountPercentage / 100);
+    }
+
+    // Shipping logic (simplified for live cart, can be detail refined in checkout)
+    let currentShippingCost = 0;
+    if (config.isShippingModuleEnabled) {
+        if (config.freeShippingThreshold > 0 && cartTotal >= config.freeShippingThreshold) {
+            currentShippingCost = 0;
+        } else {
+            currentShippingCost = config.flatShippingCost;
         }
     }
 
@@ -140,6 +162,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             applyCoupon,
             removeCoupon,
             discountAmount,
+            shippingCost: currentShippingCost,
+            freeShippingThreshold: config.freeShippingThreshold,
+            isShippingModuleEnabled: config.isShippingModuleEnabled,
             finalTotal
         }}>
             {children}

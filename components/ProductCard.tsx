@@ -12,6 +12,7 @@ interface ProductCardProps {
         isOffer?: boolean;
         offerPrice?: number | null;
         originalPrice?: number | null;
+        excludeFromCoupons?: boolean;
     };
 }
 
@@ -32,7 +33,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             name: product.name,
             price: displayPrice, // Use the actual price (offer or regular)
             imageUrl: product.imageUrl,
-            category: product.category || 'General'
+            category: product.category || 'General',
+            excludeFromCoupons: product.excludeFromCoupons
         });
     };
 

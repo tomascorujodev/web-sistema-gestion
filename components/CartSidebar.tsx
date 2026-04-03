@@ -17,6 +17,9 @@ export default function CartSidebar() {
         applyCoupon,
         removeCoupon,
         discountAmount,
+        shippingCost,
+        freeShippingThreshold,
+        isShippingModuleEnabled,
         finalTotal
     } = useCart();
 
@@ -131,6 +134,30 @@ export default function CartSidebar() {
                         ))
                     )}
                 </div>
+
+                {isShippingModuleEnabled && items.length > 0 && (
+                    <div className="px-6 py-3 bg-brand/5 border-t border-white/5">
+                        {cartTotal < freeShippingThreshold ? (
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-[10px] uppercase tracking-widest font-bold">
+                                    <span className="text-gray-400">Envío Gratis</span>
+                                    <span className="text-brand">Faltan ${(freeShippingThreshold - cartTotal).toFixed(2)}</span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-brand transition-all duration-500" 
+                                        style={{ width: `${Math.min(100, (cartTotal / freeShippingThreshold) * 100)}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 text-green-500 text-[10px] uppercase tracking-widest font-bold">
+                                <Truck className="h-3 w-3" />
+                                <span>¡Tu envío es gratis!</span>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {items.length > 0 && (
                     <div className="p-6 border-t border-[var(--foreground)]/10 bg-[var(--foreground)]/5">

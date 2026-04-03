@@ -8,6 +8,9 @@ interface SiteConfig {
     carouselImages: any[];
     isStoreEnabled: boolean;
     theme: string;
+    isShippingModuleEnabled: boolean;
+    flatShippingCost: number;
+    freeShippingThreshold: number;
 }
 
 interface ConfigContextType {
@@ -25,7 +28,10 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
         secondaryColor: "#000000",
         carouselImages: [],
         isStoreEnabled: true,
-        theme: "Dark"
+        theme: "Dark",
+        isShippingModuleEnabled: false,
+        flatShippingCost: 0,
+        freeShippingThreshold: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -47,7 +53,10 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
                         secondaryColor: data.secondaryColor || "#000000",
                         carouselImages: data.carouselImages || [],
                         isStoreEnabled: data.isStoreEnabled !== undefined ? data.isStoreEnabled : true,
-                        theme: theme
+                        theme: theme,
+                        isShippingModuleEnabled: data.isShippingModuleEnabled || false,
+                        flatShippingCost: data.flatShippingCost || 0,
+                        freeShippingThreshold: data.freeShippingThreshold || 0
                     });
                 }
             } catch (error) {
